@@ -31,7 +31,7 @@ class QuestionnaireApplicationTests {
 	public void findByCaption2() {
 		List<Questions> questionsList = questionsDao.findByCaption("測試01");
 		for(Questions item : questionsList) {
-		System.out.printf("問卷名稱 :%s 問題 :%s 選項 :%s\n", item.getCaption() ,item.getQuestions() ,item.getPotions());
+		System.out.printf("問卷名稱 :%s 問題 :%s 選項 :%s\n", item.getCaption() ,item.getQuestions() ,item.getOptions());
 		}
 	}
 }

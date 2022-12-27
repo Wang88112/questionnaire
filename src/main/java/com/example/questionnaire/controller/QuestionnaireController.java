@@ -27,7 +27,7 @@ public class QuestionnaireController {
 
 	// 1-1創建問卷
 	@PostMapping(value = "/api/createQuestionnaire")
-	public QuestionnaireRes createQuestuonnaire(@RequestBody QuestionnaireReq req) {
+	public QuestionnaireRes createQuestionnaire(@RequestBody QuestionnaireReq req) {
 		QuestionnaireRes checkResult = checkParam(req);
 		if (checkResult != null) {
 			return checkResult;
@@ -41,9 +41,9 @@ public class QuestionnaireController {
 		if (req.getStartDate().isAfter(req.getEndDate())) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.STAETTIME_ERROR.getMessage());
 		}
-		Questionnaire ceateQuestionnaire = questionnaireService.createQuestuonnaire(req.getCaption(), req.getContent(),
+		Questionnaire questionnaire = questionnaireService.createQuestionnaire(req.getCaption(), req.getContent(),
 				req.getStartDate(), req.getEndDate());
-		return new QuestionnaireRes(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage(), ceateQuestionnaire);
+		return new QuestionnaireRes(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage(), questionnaire);
 	}
 
 	// 1-1創建問卷的空字串判斷
@@ -64,7 +64,7 @@ public class QuestionnaireController {
 
 	// 1-2更改問卷
 	@PostMapping(value = "/api/updateQuestionnaire")
-	public QuestionnaireRes updateQuestuonnaire(@RequestBody QuestionnaireReq req) {
+	public QuestionnaireRes updateQuestionnaire(@RequestBody QuestionnaireReq req) {
 		if(!StringUtils.hasText(req.getCaption())) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_REQUIRED.getMessage());
 		}
@@ -80,31 +80,31 @@ public class QuestionnaireController {
 		    req.getStartDate() == null && req.getEndDate() == null) {
 	        return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_CONTENT_STRATTIME_ENDTIME_EMPTY.getMessage());
 }
-        QuestionnaireRes updateQuestionnaire = questionnaireService.updateQuestuonnaire(req.getCaption(), 
+        QuestionnaireRes questionnaire = questionnaireService.updateQuestionnaire(req.getCaption(), 
 				req.getNewCaption(), req.getContent(), req.getStartDate(), req.getEndDate());
-		return updateQuestionnaire;
+		return questionnaire;
 	}
 	
 	//1-3刪除問卷
 	@PostMapping(value = "/api/deleteQuestionnaire")
-	public QuestionnaireRes deleteQuestuonnaire(@RequestBody QuestionnaireReq req) {
+	public QuestionnaireRes deleteQuestionnaire(@RequestBody QuestionnaireReq req) {
 		if(!StringUtils.hasText(req.getCaption())) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_EMPTY.getMessage());
 		}
-		QuestionnaireRes deleteQuestionnaire = questionnaireService.deleteQuestionnaire(req.getCaption());
-		return deleteQuestionnaire;
+		QuestionnaireRes questionnaire = questionnaireService.deleteQuestionnaire(req.getCaption());
+		return questionnaire;
 	}
 
 	// 2-1創建問題
 	@PostMapping(value = "/api/createQuestions")
-	public QuestionnaireRes createQuestuons(@RequestBody QuestionnaireReq req) {
+	public QuestionnaireRes createQuestions(@RequestBody QuestionnaireReq req) {
 		QuestionnaireRes checkResult = checkParam2(req);
 		if (checkResult != null) {
 			return checkResult;
 		}
-		QuestionnaireRes createQuestions = questionnaireService.createQuestions(req.getCaption(), req.getQuestions(),
-				req.getPotions());
-		return createQuestions;
+		QuestionnaireRes questions = questionnaireService.createQuestions(req.getCaption(), req.getQuestions(),
+				req.getOptions());
+		return questions;
 
 	}
 
@@ -114,8 +114,8 @@ public class QuestionnaireController {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_EMPTY.getMessage());
 		} else if (!StringUtils.hasText(req.getQuestions())) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.QUESTIONS_EMPTY.getMessage());
-		} else if (!StringUtils.hasText(req.getPotions())) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.POTIONS_EMPTY.getMessage());
+		} else if (!StringUtils.hasText(req.getOptions())) {
+			return new QuestionnaireRes(QuestionnaireRtnCode.OPTIONS_EMPTY.getMessage());
 		}
 		return null;
 	}
@@ -129,15 +129,15 @@ public class QuestionnaireController {
 		if (!StringUtils.hasText(req.getQuestions())) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.QUESTIONS_EMPTY.getMessage());
 		}
-		if (!StringUtils.hasText(req.getNewQuestions()) && !StringUtils.hasText(req.getPotions())) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.QUESTIONS_POTIONS_EMPTY.getMessage());
+		if (!StringUtils.hasText(req.getNewQuestions()) && !StringUtils.hasText(req.getOptions())) {
+			return new QuestionnaireRes(QuestionnaireRtnCode.QUESTIONS_OPTIONS_EMPTY.getMessage());
 		}
-		QuestionnaireRes updateQuestions = questionnaireService.updateQuestions(req.getCaption(), req.getQuestions(),
-				req.getNewQuestions(), req.getPotions());
-		return updateQuestions;
+		QuestionnaireRes questions = questionnaireService.updateQuestions(req.getCaption(), req.getQuestions(),
+				req.getNewQuestions(), req.getOptions());
+		return questions;
 	}
 	
-	//1-3刪除問卷
+	//2-3刪除問題
 	@PostMapping(value = "/api/deleteQuestions")
 	public QuestionnaireRes deleteQuestions(@RequestBody QuestionnaireReq req) {
 		if(!StringUtils.hasText(req.getCaption())) {
@@ -146,8 +146,8 @@ public class QuestionnaireController {
 		if(!StringUtils.hasText(req.getQuestions())) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.QUESTIONS_EMPTY.getMessage());
 		}
-		QuestionnaireRes deleteQuestions = questionnaireService.deleteQuestions(req.getCaption(), req.getQuestions());
-		return deleteQuestions;
+		QuestionnaireRes questions = questionnaireService.deleteQuestions(req.getCaption(), req.getQuestions());
+		return questions;
 	}
 
 	// 3.創建使用者

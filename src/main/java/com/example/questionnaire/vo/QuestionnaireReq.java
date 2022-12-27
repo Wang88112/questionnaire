@@ -21,7 +21,7 @@ public class QuestionnaireReq {
 	// questions
 	private String questions;
 
-	private String potions;
+	private String options;
 
 	private String newQuestions;
 
@@ -80,12 +80,12 @@ public class QuestionnaireReq {
 		this.questions = questions;
 	}
 
-	public String getPotions() {
-		return potions;
+	public String getOptions() {
+		return options;
 	}
 
-	public void setPotions(String potions) {
-		this.potions = potions;
+	public void setOptions(String options) {
+		this.options = options;
 	}
 
 	public String getNewQuestions() {
@@ -103,5 +103,7 @@ public class QuestionnaireReq {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+
+	
 
 }

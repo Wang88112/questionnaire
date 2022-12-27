@@ -35,14 +35,14 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
 	//1創建問卷
 	@Override
-	public Questionnaire createQuestuonnaire(String caption, String content, LocalDate startDate, LocalDate endDate) {
+	public Questionnaire createQuestionnaire(String caption, String content, LocalDate startDate, LocalDate endDate) {
 		Questionnaire qestionnaire = new Questionnaire(caption, content, startDate, endDate);
 		return questionnaireDao.save(qestionnaire);
 	}
 
 	//1-2更改問卷
 	@Override
-	public QuestionnaireRes updateQuestuonnaire(String caption, String newCaption, String content, LocalDate startDate,
+	public QuestionnaireRes updateQuestionnaire(String caption, String newCaption, String content, LocalDate startDate,
 			LocalDate endDate) {
 		QuestionnaireRes questionnaireRes = new QuestionnaireRes();
 		Optional<Questionnaire> qestionnaire = questionnaireDao.findByCaption(caption);
@@ -93,7 +93,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 	
 	//2-1創建問題
 	@Override
-	public QuestionnaireRes createQuestions(String caption, String questions, String potions) {
+	public QuestionnaireRes createQuestions(String caption, String questions, String options) {
 		QuestionnaireRes questionnaireRes = new QuestionnaireRes();
 		Optional<Questionnaire> qestionnaire = questionnaireDao.findByCaption(caption);
 		if (!qestionnaire.isPresent()) {
@@ -105,7 +105,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 		if (questionsIdOp.isPresent()) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_QUESTIONS_EXISTED.getMessage());
 		}
-		Questions questionsInfo = new Questions(caption, questions, potions);
+		Questions questionsInfo = new Questions(caption, questions, options);
 		questionsDao.save(questionsInfo);
 		questionnaireRes.setMessage(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage());
 		questionnaireRes.setQuestions(questionsInfo);
@@ -114,7 +114,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
 	//2-2更改問題
 	@Override
-	public QuestionnaireRes updateQuestions(String caption, String questions, String newQuestions, String potions) {
+	public QuestionnaireRes updateQuestions(String caption, String questions, String newQuestions, String options) {
 		QuestionnaireRes questionnaireRes = new QuestionnaireRes();
 		QuestionsId questionsId = new QuestionsId(caption, questions);
 		Optional<Questions> questionsOp = questionsDao.findById(questionsId);
@@ -126,8 +126,8 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 			questionsDao.delete(question);
 			question.setQuestions(newQuestions);
 		}
-		if(StringUtils.hasText(potions)) {
-			question.setPotions(potions);
+		if(StringUtils.hasText(options)) {
+			question.setOptions(options);
 		}
 		questionsDao.save(question);
 		questionnaireRes.setMessage(QuestionnaireRtnCode.UPDATE_SUCCESSFUL.getMessage());
@@ -154,6 +154,12 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 		LocalDateTime createTime = LocalDateTime.now();
 		User user = new User(userName, createTime);
 		return userDao.save(user);
+	}
+
+	@Override
+	public QuestionnaireRes findCaptionAndStartDateAndEndDate(String caption, LocalDate startDate, LocalDate endDate) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

@@ -12,7 +12,7 @@ public enum QuestionnaireRtnCode {
 	ENDTIME_EMPTY("400", "結束時間不得為空!"),
 	CAPTION_INEXISTED("400", "問卷名稱不存在!"),
 	QUESTIONS_EMPTY("400", "問題不得為空!"),
-	POTIONS_EMPTY("400", "選項不得為空!"),
+	OPTIONS_EMPTY("400", "選項不得為空!"),
 	USERNAME_EMPTY("400", "姓名不得為空!"),
 	STAETTIME_ERROR("400", "開始時間不得晚於結束時間!"),
 	STAETTIME_NOW("400", "開始時間不得晚於現在時間!"),
@@ -20,7 +20,7 @@ public enum QuestionnaireRtnCode {
 	CAPTION_QUESTIONS_INEXISTED("400", "此問卷問題不存在!"),
 	CAPTION_REQUIRED("400", "問卷名稱必填!"),
 	CAPTION_CONTENT_STRATTIME_ENDTIME_EMPTY("400", "新問卷名稱、內容、開始時間、結束時間其中一項不得為空!"),
-	QUESTIONS_POTIONS_EMPTY("400", "問題、選項不得皆為空!")
+	QUESTIONS_OPTIONS_EMPTY("400", "問題、選項不得皆為空!")
 	;
 	
 	private String code;

@@ -19,17 +19,17 @@ public class Questions {
 	@Column(name = "questions")
 	private String questions;
 
-	@Column(name = "potions")
-	private String potions;
+	@Column(name = "options")
+	private String options;
 
 	public Questions() {
 
 	}
 
-	public Questions(String caption, String questions, String potions) {
+	public Questions(String caption, String questions, String options) {
 		this.caption = caption;
 		this.questions = questions;
-		this.potions = potions;
+		this.options = options;
 	}
 
 	public String getCaption() {
@@ -48,12 +48,14 @@ public class Questions {
 		this.questions = questions;
 	}
 
-	public String getPotions() {
-		return potions;
+	public String getOptions() {
+		return options;
 	}
 
-	public void setPotions(String potions) {
-		this.potions = potions;
+	public void setOptions(String options) {
+		this.options = options;
 	}
+
+	
 
 }
