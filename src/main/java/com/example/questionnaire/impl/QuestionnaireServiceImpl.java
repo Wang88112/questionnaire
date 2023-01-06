@@ -100,10 +100,10 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_INEXISTED.getMessage());
 		}
 
-		Optional<Questions> questionsIdOp = questionsDao.findByQuestions(questions);
-		if (questionsIdOp.isPresent()) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_QUESTIONS_EXISTED.getMessage());
-		}
+//		Optional<Questions> questionsIdOp = questionsDao.findByQuestions(questions);
+//		if (questionsIdOp.isPresent()) {
+//			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_QUESTIONS_EXISTED.getMessage());
+//		}
 		Questions questionsInfo = new Questions(serialNumber, questionsId, questions, questionsType, choose);
 		questionsDao.save(questionsInfo);
 		questionnaireRes.setMessage(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage());
@@ -217,11 +217,15 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 		UserInfo userInfo = new UserInfo(user.getUserId(), userName, phone, email, age, createTime);
 		userInfoDao.save(userInfo);
 
-		
 		for (UserAnswer item : ansList) {
-			item.setUserId(user.getUserId());
+			item.setUserId(userInfo.getUserId());
 			userAnswerDao.saveAll(ansList);
 		}
+
+		for (UserAnswer item : ansList) {
+			item.setAnsAiId(0);
+		}
+
 //		List<Questions> questList = questionsDao.findBySerialNumber(serialNumber);
 //		for(int i = 0; i < questList.size(); i++) {
 //			int questId = questList.get(i).getQuestionsId();
@@ -236,34 +240,66 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 	// 統計問題數據
 	@Override
 	public QuestionnaireRes statisticalData(int serialNumber) {
-		List<Questions> serailList = questionsDao.findBySerialNumber(serialNumber);
-		int questionsId = serailList.get(serialNumber).getQuestionsId();
 
-		List<UserAnswer> serialQuestList = userAnswerDao.findBySerialNumberAndQuestionsId(serialNumber, questionsId);
-		if (serialQuestList.isEmpty()) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_QUESTIONS_INEXISTED.getMessage());
+		List<Questions> qSerailList = questionsDao.findBySerialNumber(serialNumber);
+		List<Integer> qQuestionsIdList = new ArrayList<>();
+		for (Questions item : qSerailList) {
+			qQuestionsIdList.add(item.getQuestionsId());
 		}
+//
+//		Map<String, Integer> questMap = new HashMap<>();
+//		for (Integer itemQId : qQuestionsIdList) {
+//			List<Questions> qQIdList = questionsDao.findBySerialNumberAndQuestionsId(serialNumber,itemQId);
+//			for (Questions chooseItem : qQIdList) {
+//				questMap.put(chooseItem.getChoose(), 0);
+//			}
+//			
+//		}
 
-		// 此問卷此問題總比數
-		int listSize = serialQuestList.size();
+//		Map<String, Integer> ansMap = new HashMap<>();
 
-		Questions questions = questionsDao.findBySerialNumberAndQuestionsId(serialNumber, questionsId);
-		String[] questionsArray = questions.getChoose().split(";");
-		Map<String, Integer> ansMap = new HashMap<>();
+//		 // 幾筆資料 ()               
+//		List<UserAnswer> entryList = userAnswerDao.findBySerialNumber(serialNumber);
+//		for(Entry<Integer, Integer> item1: quesMap.entrySet()) {
+//			for(UserAnswer item2: entryList) {
+//				if(item1.getValue().equals(item2.getQuestionsId())) {
+//					 Questions questions = questionsDao.findBySerialNumberAndQuestionsId(serialNumber, item2.getQuestionsId());
+//					 String[] questionsArray = questions.getChoose().split(";");
+//						for (String arrayItem : questionsArray) {
+//							ansMap.put(arrayItem, 0);
+//						}
+//				}
+//			}
+//		}
 
-		for (String item : questionsArray) {
-			ansMap.put(item, null);
-		}
+//        
+//		
+//		
+//        for(Questions item : serailList) {
+//        	questionsIdList.add(item.getQuestionsId());	
+//        	
+//        	
+//        }
+//        Questions questions = new Questions();
+//        Questions quest = questionsDao.findBySerialNumberAndQuestionsId(serialNumber, questions.getQuestionsId());
+//		String[] questionsArray = questions.getChoose().split(";");
+//		for (String arrayItem : questionsArray) {
+//			ansMap.put(arrayItem, 0);
+//		}
 
-		for (Entry<String, Integer> item1 : ansMap.entrySet()) {
-			for (UserAnswer item2 : serialQuestList) {
-				if (item1.getKey().equals(item2.getChoose())) {
-					int count = item1.getValue();
-					count += 1;
-					item1.setValue(count);
-				}
-			}
-		}
+//		// 此問卷此問題總比數
+//		int listSize = questList.size();
+//
+//			
+//		for (Entry<String, Integer> item1 : ansMap.entrySet()) {
+//			for (UserAnswer item2 : questList) {
+//				if (item1.getKey().equals(item2.getChoose())) {
+//					int count = item1.getValue();
+//					count += 1;
+//					item1.setValue(count);
+//				}
+//			}
+//		}
 //		    for() {
 //		    	
 //		    }

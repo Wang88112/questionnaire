@@ -13,11 +13,15 @@ public interface QuestionsDao extends JpaRepository<Questions, Integer>{
 	
 	public Optional<Questions> findByQuestions(String questions);
 	
-	public Optional<Questions> findByQuestionsId(int questionsId);
+//	public Optional<Questions> findByQuestionsId(int questionsId);
 	
 	public List<Questions> findBySerialNumber(int serialNumber);
+	
+//	public List<Questions> findByQuestionsId(int questions_id);
 	
 	public List<Questions> findAllByQuestionsIdIn(List<Integer> questionsIdList);
 	
 	public Questions findBySerialNumberAndQuestionsId(int serialNumber, int questionsId);
+	
+	public Questions findByQuestionsId(int questionsId);
 }

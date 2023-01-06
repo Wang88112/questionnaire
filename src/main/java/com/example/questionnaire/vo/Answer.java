@@ -1,54 +1,28 @@
-package com.example.questionnaire.entity;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+package com.example.questionnaire.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@Entity
-@Table(name = "useranswer")
-public class UserAnswer {
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class Answer {
 
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ans_aiid")
-	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
-	private int ansAiId;
-
-	@Column(name = "user_id")
 	private int userId;
 
-	@Column(name = "serial_number")
 	private int serialNumber;
 
-	@Column(name = "questions_id")
 	private int questionsId;
 
-	@Column(name = "choose")
 	private String choose;
 
-	public UserAnswer() {
+	public Answer() {
 
 	}
 
-	public UserAnswer(int userId, int serialNumber, int questionsId, String choose) {
+	public Answer(int userId, int serialNumber, int questionsId, String choose) {
+		super();
 		this.userId = userId;
 		this.serialNumber = serialNumber;
 		this.questionsId = questionsId;
 		this.choose = choose;
-	}
-
-	public int getAnsAiId() {
-		return ansAiId;
-	}
-
-	public void setAnsAiId(int ansAiId) {
-		this.ansAiId = ansAiId;
 	}
 
 	public int getUserId() {
