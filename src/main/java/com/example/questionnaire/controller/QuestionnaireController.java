@@ -1,7 +1,5 @@
 package com.example.questionnaire.controller;
 
-
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -68,7 +66,7 @@ public class QuestionnaireController {
 	// 1-2更改問卷
 	@PostMapping(value = "/api/updateQuestionnaire")
 	public QuestionnaireRes updateQuestionnaire(@RequestBody QuestionnaireReq req) {
-		if(req.getSerialNumber() <= 0) {
+		if (req.getSerialNumber() <= 0) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.SERIALNUMBER_EMPTY.getMessage());
 		}
 		LocalDate d = LocalDate.now();
@@ -83,18 +81,18 @@ public class QuestionnaireController {
 //		    req.getStartDate() == null && req.getEndDate() == null) {
 //	        return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_CONTENT_STRATTIME_ENDTIME_EMPTY.getMessage());
 //}
-        QuestionnaireRes questionnaire = questionnaireService.updateQuestionnaire(req.getSerialNumber(), 
-        		req.getCaption(), req.getContent(), req.getStartDate(), req.getEndDate());
+		QuestionnaireRes questionnaire = questionnaireService.updateQuestionnaire(req.getSerialNumber(),
+				req.getCaption(), req.getContent(), req.getStartDate(), req.getEndDate());
 		return questionnaire;
 	}
-	
-	//1-3刪除問卷(需修改成不林值控制開放與否)
+
+	// 1-3刪除問卷(需修改成不林值控制開放與否)
 	@PostMapping(value = "/api/deleteQuestionnaire")
 	public QuestionnaireRes deleteQuestionnaire(@RequestBody QuestionnaireReq req) {
-		if(!StringUtils.hasText(req.getCaption())) {
+		if (req.getSerialNumber() <= 0) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_EMPTY.getMessage());
 		}
-		QuestionnaireRes questionnaire = questionnaireService.deleteQuestionnaire(req.getCaption());
+		QuestionnaireRes questionnaire = questionnaireService.deleteQuestionnaire(req.getSerialNumber());
 		return questionnaire;
 	}
 
@@ -105,18 +103,18 @@ public class QuestionnaireController {
 		if (checkResult != null) {
 			return checkResult;
 		}
-		QuestionnaireRes questions = questionnaireService.createQuestions(req.getSerialNumber(), req.getQuestionsId()
-				, req.getQuestions(), req.isQuestionsType(), req.getChoose());
+		QuestionnaireRes questions = questionnaireService.createQuestions(req.getSerialNumber(), req.getQuestionsId(),
+				req.getQuestions(), req.isQuestionsType(), req.getChoose(), req.isChooseType());
 		return questions;
 
 	}
 
 	// 2-1創建問題的空字串判斷
 	private QuestionnaireRes checkParam2(QuestionnaireReq req) {
-		if (req.getSerialNumber() <=0) {
+		if (req.getSerialNumber() <= 0) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.SERIALNUMBER_EMPTY.getMessage());
 		}
-		if (req.getQuestionsId() <=0) {
+		if (req.getQuestionsId() <= 0) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.QUESTIONS_EMPTY.getMessage());
 		}
 		if (!StringUtils.hasText(req.getQuestions())) {
@@ -141,94 +139,70 @@ public class QuestionnaireController {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CHOOSE_EMPTY.getMessage());
 		}
 		QuestionnaireRes questions = questionnaireService.updateQuestions(req.getQuestionsAiId(), req.getQuestions(),
-				req.isQuestionsType(), req.getChoose());
+				req.isQuestionsType(), req.getChoose(), req.isChooseType());
 		return questions;
 	}
-	
-	//2-3刪除問題
+
+	// 2-3刪除問題
 	@PostMapping(value = "/api/deleteQuestions")
 	public QuestionnaireRes deleteQuestions(@RequestBody QuestionnaireReq req) {
-		if(req.getQuestionsId() <= 0) {
+		if (req.getQuestionsId() <= 0) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_EMPTY.getMessage());
 		}
-	
+
 		QuestionnaireRes questions = questionnaireService.deleteQuestions(req.getQuestionsId());
 		return questions;
 	}
 
-	// 3.創建使用者
-	@PostMapping(value = "/api/createUser")
-	private QuestionnaireRes createUser(@RequestBody QuestionnaireReq req) {
-		String userEmail = "[A-Za-z0-9+_.-]+@(.+)$";
-		if (!StringUtils.hasLength(req.getUserName())) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.USERNAME_EMPTY.getMessage());
-		}else if(!StringUtils.hasText(req.getPhone())) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.PHONE_EMPTY.getMessage());
-		}else if(!StringUtils.hasText(req.getEmail())) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.EMAIL_EMPTY.getMessage());
-		}else if(!StringUtils.hasText(req.getAge())) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.AGE_EMPTY.getMessage());
-		}else if(!req.getPhone().matches("\\d{2}-\\d{3}-\\d{4}|\\d{2}-\\d{4}-\\d{4}")) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.PHONE_ERROR.getMessage());
-		}else if(!req.getEmail().matches(userEmail)) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.EMAIL_ERROR.getMessage());
-		}
-		UserInfo user = questionnaireService.createUser(req.getUserName(), req.getPhone(), 
-				req.getEmail(), req.getAge());
-		return new QuestionnaireRes(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage(), user);
-	}
-	
-	//搜尋問卷(透過問卷名稱模糊搜尋)
-	@PostMapping(value = "/api/findByCaptionContaining")
-	public QuestionnaireRes findByCaptionContaining(@RequestBody QuestionnaireReq req) {
-		if(!StringUtils.hasText(req.getCaption())) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_EMPTY.getMessage());
-		}
-		QuestionnaireRes questuonnaire = questionnaireService.findByCaptionContaining(req.getCaption());
+
+
+	// 搜尋問卷(透過問卷名稱模糊搜尋)
+	@PostMapping(value = "/api/findByCaptionContainingAndStartDateAndEndDate")
+	public QuestionnaireRes findByCaptionContainingAndStartDateAndEndDate(@RequestBody QuestionnaireReq req) {
+
+		QuestionnaireRes questuonnaire = questionnaireService
+				.findByCaptionContainingAndStartDateAndEndDate(req.getCaption(), req.getStartDate(), req.getEndDate());
 		return questuonnaire;
 	}
+
 	
-	//搜尋問卷(透過時間)
-	@PostMapping(value = "/api/findByStartDateAndEndDateBetween")
-	public QuestionnaireRes findByStartDateAndEndDateBetween(@RequestBody QuestionnaireReq req) {
-		if ((req.getStartDate() == null)) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.STRATTIME_EMPTY.getMessage());
-		}
-		if (req.getEndDate() == null) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.ENDTIME_EMPTY.getMessage());
-		}
-		return questionnaireService.findByStartDateAndEndDateBetween(req.getStartDate(), req.getEndDate());
-	}
-	
-	//儲存回答者問題
-	@PostMapping(value = "/api/createAns")
-	public QuestionnaireRes createAns(@RequestBody QuestionnaireReq req) {
-		if(req.getUserId() <= 0) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.USERID_EMPTY.getMessage());
-		}
-		if (req.getSerialNumber() <=0) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.SERIALNUMBER_EMPTY.getMessage());
-		}
-		if (req.getQuestionsId() <=0) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.QUESTIONSID_EMPTY.getMessage());
-		}
-		if(!StringUtils.hasText(req.getChoose())) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.CHOOSE_EMPTY.getMessage());
-		}
-		return questionnaireService.createAns(req.getUserId(), req.getSerialNumber(), req.getQuestionsId(), req.getChoose()) ;		
-	}
-	
-	//儲存回答者問題(List)
-	@PostMapping(value = "/api/createAnsList")
-	public QuestionnaireRes createAns1(@RequestBody List<UserAnswer> ansList){
-		return questionnaireService.createAns1(ansList);		
-	}
-	
-	//儲存回答者問題(全部)
+
+	// 儲存回答者問題(全部)
 	@PostMapping(value = "/api/createUserInfoAndAns")
 	public QuestionnaireResList createUserInfoAndAns(@RequestBody QuestionnaireReq req) {
-		return questionnaireService.createUserInfoAndAns(req.getUserName(), req.getPhone(), req.getEmail(), req.getAge(), req.getAnsList());
-		
+		return questionnaireService.createUserInfoAndAns(req.getSerialNumber(), req.getUserName(), req.getPhone(), req.getEmail(),
+				req.getAge(), req.getAnsList());
+	}
+
+	// 得到所有問卷
+	@PostMapping(value = "/api/getAllCaptions")
+	public QuestionnaireRes getAllCaptions() {
+		return questionnaireService.getAllCaptions();
+
+	}
+
+	// !需修改! 拿全部使用者回答 userInfoDao //要ID姓名創建時間 OK
+	@PostMapping(value = "/api/getAllUserInfo")
+	public QuestionnaireRes getAllUserInfo(@RequestBody QuestionnaireReq req) {
+		return questionnaireService.getAllUserInfo(req.getSerialNumber());
+
+	}
+
+	// 顯示問卷問題 OK
+	@PostMapping(value = "/api/getAllQuestions")
+	public QuestionnaireResList getAllQuestions(@RequestBody QuestionnaireReq req) {
+		return questionnaireService.getAllQuestions(req.getSerialNumber());
 	}
 	
+	//問卷回饋 user 0108 ok
+	@PostMapping(value = "/api/getUserInfoAndAns")
+	public QuestionnaireResList getUserInfoAndAns(@RequestBody QuestionnaireReq req) {
+		return questionnaireService.getUserInfoAndAns(req.getUserId());
+	}
+	
+//	//數據統計
+//		@PostMapping(value = "/api/statisticalData")
+//		public QuestionnaireResList statisticalData(@RequestBody QuestionnaireReq req) {
+//			return questionnaireService.getUserInfoAndAns(req.getSerialNumber());
+//		}
 }

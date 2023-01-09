@@ -30,9 +30,9 @@ public class Questionnaire {
 
 	@Column(name = "end_date")
 	private LocalDate endDate;
-	
-	@Column(name = "state")
-	private boolean state = false;
+
+//	@Column(name = "state")
+//	private String state;
 
 	public Questionnaire() {
 
@@ -85,14 +85,12 @@ public class Questionnaire {
 		this.endDate = endDate;
 	}
 
-	public boolean isState() {
-		return state;
-	}
-
-	public void setState(boolean state) {
-		this.state = state;
-	}
-
-	
+//	public String getState() {
+//		return state;
+//	}
+//
+//	public void setState(String state) {
+//		this.state = state;
+//	}
 
 }

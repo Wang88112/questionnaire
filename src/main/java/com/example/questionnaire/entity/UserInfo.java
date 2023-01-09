@@ -18,6 +18,9 @@ public class UserInfo {
 	@Column(name = "user_id")
 	private int userId;
 
+	@Column(name = "serial_number")
+	private int serialNumber;
+
 	@Column(name = "user_name")
 	private String userName;
 
@@ -37,23 +40,25 @@ public class UserInfo {
 
 	}
 
-	public UserInfo(int userId, String userName, String phone, String email, String age, LocalDateTime createTime) {
+//	public UserInfo(int userId, String userName, String phone, String email, String age, LocalDateTime createTime) {
+//		this.userId = userId;
+//		this.userName = userName;
+//		this.phone = phone;
+//		this.email = email;
+//		this.age = age;
+//		this.createTime = createTime;
+//	}
+
+	public UserInfo(int userId, int serialNumber, String userName, String phone, String email, String age,
+			LocalDateTime createTime) {
 		this.userId = userId;
+		this.serialNumber = serialNumber;
 		this.userName = userName;
 		this.phone = phone;
 		this.email = email;
 		this.age = age;
 		this.createTime = createTime;
 	}
-
-	public UserInfo(String userName, String phone, String email, String age, LocalDateTime createTime) {
-		this.userName = userName;
-		this.phone = phone;
-		this.email = email;
-		this.age = age;
-		this.createTime = createTime;
-	}
-
 
 	public int getUserId() {
 		return userId;
@@ -61,6 +66,14 @@ public class UserInfo {
 
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	public int getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(int serialNumber) {
+		this.serialNumber = serialNumber;
 	}
 
 	public String getUserName() {

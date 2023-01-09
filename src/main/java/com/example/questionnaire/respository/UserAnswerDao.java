@@ -13,11 +13,11 @@ public interface UserAnswerDao extends JpaRepository<UserAnswer, Integer>{
  
 	public List<UserAnswer> findByUserId(int userId);
 	
-//	public Optional<UserAnswer> findBySerialNumberAndQuestionsId(int serialNumber, int questionsId);
+	public List<UserAnswer> findBySerialNumberAndQuestionsId(int serialNumber, int questionsId);
 	
-	public List<UserAnswer> findAllBySerialNumberAndQuestionsIdIn(int serialNumber, List<Integer> questionsIdList);
+//	public List<UserAnswer> findAllBySerialNumberAndQuestionsIdIn(int serialNumber, List<Integer> questionsIdList);
 	
-	
+//	public List<UserAnswer> findByQuestions(int serialNumber);
 	
 	public List<UserAnswer> findBySerialNumber(int serialNumber);
 	

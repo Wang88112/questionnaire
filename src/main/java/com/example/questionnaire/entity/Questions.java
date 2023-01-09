@@ -26,24 +26,30 @@ public class Questions {
 	@Column(name = "questions")
 	private String questions;
 
+	//是否為必選
 	@Column(name = "questions_type")
 	private boolean questionsType;
 
 	@Column(name = "choose")
 	private String choose;
 
+	//是否為多選
+	@Column(name = "choose_type")
+	private boolean chooseType;
+
 	public Questions() {
 
 	}
 
-	public Questions(int serialNumber, int questionsId, String questions, boolean questionsType, String choose) {
+	public Questions(int serialNumber, int questionsId, String questions, boolean questionsType, String choose, boolean chooseType) {
 		this.serialNumber = serialNumber;
 		this.questionsId = questionsId;
 		this.questions = questions;
 		this.questionsType = questionsType;
 		this.choose = choose;
+		this.chooseType = chooseType;
 	}
-
+	
 	public int getQuestionsId() {
 		return questionsId;
 	}
@@ -90,6 +96,14 @@ public class Questions {
 
 	public void setChoose(String choose) {
 		this.choose = choose;
+	}
+
+	public boolean isChooseType() {
+		return chooseType;
+	}
+
+	public void setChooseType(boolean chooseType) {
+		this.chooseType = chooseType;
 	}
 
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -81,19 +82,21 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
 	// 1-3刪除問卷
 	@Override
-	public QuestionnaireRes deleteQuestionnaire(String caption) {
-		Optional<Questionnaire> qestionnaireOp = questionnaireDao.findByCaption(caption);
-		if (!qestionnaireOp.isPresent()) {
+	public QuestionnaireRes deleteQuestionnaire(int serialNumber) {
+		List<Questionnaire> qestionnaireList = questionnaireDao.findBySerialNumber(serialNumber);
+		if (qestionnaireList.isEmpty()) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_INEXISTED.getMessage());
 		}
-
+		List<Questions> questionsList = questionsDao.findBySerialNumber(serialNumber);
+		questionnaireDao.deleteAll(qestionnaireList);
+		questionsDao.deleteAll(questionsList);
 		return new QuestionnaireRes(QuestionnaireRtnCode.DELETE_SUCCESSFUL.getMessage());
 	}
 
 	// 2-1創建問題
 	@Override
 	public QuestionnaireRes createQuestions(int serialNumber, int questionsId, String questions, boolean questionsType,
-			String choose) {
+			String choose, boolean chooseType) {
 		QuestionnaireRes questionnaireRes = new QuestionnaireRes();
 		Optional<Questionnaire> qestionnaire = questionnaireDao.findById(serialNumber);
 		if (!qestionnaire.isPresent()) {
@@ -104,7 +107,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 //		if (questionsIdOp.isPresent()) {
 //			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_QUESTIONS_EXISTED.getMessage());
 //		}
-		Questions questionsInfo = new Questions(serialNumber, questionsId, questions, questionsType, choose);
+		Questions questionsInfo = new Questions(serialNumber, questionsId, questions, questionsType, choose, chooseType);
 		questionsDao.save(questionsInfo);
 		questionnaireRes.setMessage(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage());
 		questionnaireRes.setQuestions(questionsInfo);
@@ -113,7 +116,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
 	// 2-2更改問題
 	@Override
-	public QuestionnaireRes updateQuestions(int questionsAiId, String questions, boolean questionsType, String choose) {
+	public QuestionnaireRes updateQuestions(int questionsAiId, String questions, boolean questionsType, String choose, boolean chooseType) {
 		QuestionnaireRes questionnaireRes = new QuestionnaireRes();
 		Optional<Questions> questionsOp = questionsDao.findById(questionsAiId);
 		if (!questionsOp.isPresent()) {
@@ -127,6 +130,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 			question.setChoose(choose);
 		}
 		question.setQuestionsType(questionsType);
+		question.setChooseType(chooseType);
 		questionsDao.save(question);
 		questionnaireRes.setMessage(QuestionnaireRtnCode.UPDATE_SUCCESSFUL.getMessage());
 		questionnaireRes.setQuestions(question);
@@ -145,76 +149,68 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 		return new QuestionnaireRes(QuestionnaireRtnCode.DELETE_SUCCESSFUL.getMessage());
 	}
 
-	// 創建使用者資料
-	@Override
-	public UserInfo createUser(String userName, String phone, String email, String age) {
-//		UserInfo users = new UserInfo() ;
-		LocalDateTime createTime = LocalDateTime.now();
-		UserInfo user = new UserInfo(userName, phone, email, age, createTime);
-		return userInfoDao.save(user);
-	}
-
 	// 搜尋問卷(依照名稱模糊搜尋)
 	@Override
-	public QuestionnaireRes findByCaptionContaining(String caption) {
-		List<Questionnaire> questionnaireList = questionnaireDao.findByCaptionContaining(caption);
-		if (questionnaireList.isEmpty()) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.SEARCH_FAIL.getMessage());
+	public QuestionnaireRes findByCaptionContainingAndStartDateAndEndDate(String caption, LocalDate startDate,
+			LocalDate endDate) {
+		// 搜尋全部
+		if (!StringUtils.hasText(caption) && startDate == null && endDate == null) {
+			List<Questionnaire> questionnaureList = questionnaireDao.findAll();
+			return new QuestionnaireRes(questionnaureList);
 		}
-		return new QuestionnaireRes(questionnaireList);
-	}
+		// 名稱模糊搜尋
+		else if (StringUtils.hasText(caption) && startDate == null && endDate == null) {
+			List<Questionnaire> questionnaureList = questionnaireDao.findByCaptionContaining(caption);
+			return new QuestionnaireRes(questionnaureList);
+		}
+		// 名稱+開始+結束
+		else if (StringUtils.hasText(caption) && startDate != null && endDate != null) {
+			List<Questionnaire> questionnaureList = questionnaireDao
+					.findByCaptionContainingAndStartDateGreaterThanEqualAndEndDateLessThanEqual(caption, startDate,
+							endDate);
+			return new QuestionnaireRes(questionnaureList);
+		}
+		// 名稱+開始
+		else if (StringUtils.hasText(caption) && startDate != null && endDate == null) {
+			List<Questionnaire> questionnaureList = questionnaireDao
+					.findByCaptionContainingAndStartDateGreaterThanEqual(caption, startDate);
+			return new QuestionnaireRes(questionnaureList);
+		}
+		// 名稱+結束
+		else if (StringUtils.hasText(caption) && startDate == null && endDate != null) {
+			List<Questionnaire> questionnaureList = questionnaireDao
+					.findByCaptionContainingAndStartDateGreaterThanEqual(caption, endDate);
+			return new QuestionnaireRes(questionnaureList);
+		}
+		// 開始+結束
+		else if (!StringUtils.hasText(caption) && startDate != null && endDate != null) {
+			List<Questionnaire> questionnaureList = questionnaireDao
+					.findByStartDateGreaterThanEqualAndEndDateLessThanEqual(startDate, endDate);
+			return new QuestionnaireRes(questionnaureList);
+		}
+		// 開始
+		else if (!StringUtils.hasText(caption) && startDate != null && endDate == null) {
+			List<Questionnaire> questionnaureList = questionnaireDao.findByStartDateGreaterThanEqual(startDate);
+			return new QuestionnaireRes(questionnaureList);
+		}
+		// 結束
+		else if (!StringUtils.hasText(caption) && startDate == null && endDate != null) {
+			List<Questionnaire> questionnaireList = questionnaireDao.findByEndDateLessThanEqual(endDate);
+			return new QuestionnaireRes(questionnaireList);
+		}
 
-	// 搜尋(依照開始日期及結束日期)
-	@Override
-	public QuestionnaireRes findByStartDateAndEndDateBetween(LocalDate startDate, LocalDate endDate) {
-		List<Questionnaire> startList = questionnaireDao.findByStartDateBetween(startDate, endDate);
-		List<Questionnaire> endList = questionnaireDao.findByEndDateBetween(startDate, endDate);
-		List<Integer> strId = new ArrayList<>();
-		for (Questionnaire item : startList) {
-			strId.add(item.getSerialNumber()); // strId放入符合開始時間條件的日期
-		}
-		List<Integer> exitId = new ArrayList<>();
-		for (Questionnaire item1 : endList) { // 比對符合結束時間條件的日期
-			if (strId.contains(item1.getSerialNumber())) { // 將strId內的Id與item1.getSerialNumber()內的做比對
-				exitId.add(item1.getSerialNumber()); // 相同Id都放進exitId
-			}
-		}
-		List<Questionnaire> finallyList = questionnaireDao.findAllBySerialNumberIn(exitId);
-		return new QuestionnaireRes(finallyList);
-	}
-
-	// 儲存回答者問題
-	@Override
-	public QuestionnaireRes createAns(int userId, int serialNumber, int questionsId, String choose) {
-		Optional<UserInfo> userInfoOp = userInfoDao.findById(userId);
-		if (!userInfoOp.isPresent()) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.USERID_INEXISTED.getMessage());
-		}
-		Optional<Questionnaire> questionnaireOp = questionnaireDao.findById(serialNumber);
-		if (!questionnaireOp.isPresent()) {
-			return new QuestionnaireRes(QuestionnaireRtnCode.QUESTIONNAIER_INEXISTED.getMessage());
-		}
-		UserAnswer userAnswer = new UserAnswer(userId, serialNumber, questionsId, choose);
-		userAnswerDao.save(userAnswer);
-		return new QuestionnaireRes(userAnswer, QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage());
-	}
-
-	// 儲存回答者問題(List)
-	@Override
-	public QuestionnaireRes createAns1(List<UserAnswer> ansList) {
-
-		userAnswerDao.saveAll(ansList);
-		return new QuestionnaireRes(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage(), ansList);
+		return new QuestionnaireRes(QuestionnaireRtnCode.SEARCH_FAIL.getMessage());
+		// 回復查無結果
 	}
 
 	// 一次儲存
 	@Override
-	public QuestionnaireResList createUserInfoAndAns(String userName, String phone, String email, String age,
-			List<UserAnswer> ansList) {
+	public QuestionnaireResList createUserInfoAndAns(int serialNumber, String userName, String phone, String email,
+			String age, List<UserAnswer> ansList) {
 
 		LocalDateTime createTime = LocalDateTime.now();
 		UserInfo user = new UserInfo();
-		UserInfo userInfo = new UserInfo(user.getUserId(), userName, phone, email, age, createTime);
+		UserInfo userInfo = new UserInfo(user.getUserId(), serialNumber, userName, phone, email, age, createTime);
 		userInfoDao.save(userInfo);
 
 		for (UserAnswer item : ansList) {
@@ -226,85 +222,195 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 			item.setAnsAiId(0);
 		}
 
-//		List<Questions> questList = questionsDao.findBySerialNumber(serialNumber);
-//		for(int i = 0; i < questList.size(); i++) {
-//			int questId = questList.get(i).getQuestionsId();
-//			
-//			UserAnswer userAnswer = new UserAnswer(user.getUserId(), serialNumber, questId, chooseList);
-//			userAnswerDao.save(userAnswer);
-//		}
-
 		return new QuestionnaireResList(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage(), userInfo, ansList);
 	}
 
-	// 統計問題數據
+//	// 統計問題數據
+//	@Override
+//	public QuestionnaireRes statisticalData(int serialNumber) {
+//		List<Questions> questionsList = questionsDao.findBySerialNumber(serialNumber);
+//		// List<Answer> answerList = answerDao.findByqId(qId);
+//
+//		// 題目編號 , 選項List
+//		// Map<Integer, List<String>> choicesMap = new HashMap<>();
+//
+//		// 題目編號 , 回答List
+//		// Map<Integer, List<String>> answersMap = new HashMap<>();
+//
+//		// 題目編號 , Map<選項, 回答出現的次數>
+//		Map<Integer, Map<String, Integer>> countsMap = new HashMap<>();
+//
+//		Map<Map<Integer, String>, Map<String, Double>> printTotal = new LinkedHashMap<>();
+//		int x = 0;
+//		// 遍歷題目List
+//		for (Questions item : questionsList) {
+//			x++;
+//			// 回答的答案, 回答出現次數
+//			Map<String, Integer> answerMap = new HashMap<>();
+//
+//			Map<Integer, String> questionMap = new LinkedHashMap<>();
+//
+//			Map<String, Double> doubleMap = new LinkedHashMap<>();
+//
+//			questionMap.put(x, item.getQuestions());
+//
+//			// String[] stringList = item.getChoice().split("；"); // 切割選項
+//			// List<String> trimList = new ArrayList<>(); // 切割&去空白後的選項List
+//			//
+//			// for (String item1 : stringList) { // 去空白
+////		    trimList.add(item1.trim());
+//			// }
+//
+//			String[] stringChoiceList = item.getChoose().split("；"); // 切割選項
+//			List<String> trimChoiceList = new ArrayList<>(); // 切割&去空白後的選項List
+//
+//			for (String item1 : stringChoiceList) { // 去空白
+//				trimChoiceList.add(item1.trim());
+//			}
+//
+//			// 找出單一題的List
+//			List<UserAnswer> userAnswerlist = userAnswerDao.findBySerialNumberAndQuestionsId(item.getSerialNumber(),
+//					item.getQuestionsId());
+//			List<String> answersList = new ArrayList<>(); // 所有回答的List
+//			for (UserAnswer ans : userAnswerlist) {
+//				answersList.add(ans.getChoose());
+//			}
+//			
+//			// 所有回答的List，去空白
+//			List<String> answerTrimList = new ArrayList<>();
+//			for (String ans : answersList) {
+//				String[] answerStringList = ans.split("；");
+//				for (String trimAnswer : answerStringList) {
+//					answerTrimList.add(trimAnswer.trim());
+//
+//				}
+//			}
+//			for (String choose : trimChoiceList) {
+//				answerTrimList.add(choose);
+//			}
+//
+//			// 比較選項跟所有回答是否匹配，匹配則加1
+//
+//			for (String ans : answerTrimList) {
+//				answerMap.put(ans, answerMap.getOrDefault(ans, 0) + 1); // 放進Map<String, Integer> answerMap
+//			}
+//
+//			for (Map.Entry<String, Integer> entry : answerMap.entrySet()) {
+//				entry.setValue(entry.getValue() - 1);
+//			}
+//
+//			for (Map.Entry<String, Integer> entry : answerMap.entrySet()) {
+//				String answer = entry.getKey();
+//				int count = entry.getValue();
+//				double percentsge = 100.0 * count / trimChoiceList.size();
+//				doubleMap.put(answer, percentsge);
+////		    System.out.println(answer + "：" + percentsge + "％" + "（" + entry.getValue() + "）");
+//			}
+//
+//			countsMap.put(item.getQuestionsId(), answerMap);
+//			printTotal.put(questionMap, doubleMap);
+//
+//		}
+//
+//		// System.out.println(countsMap);
+//		//
+//		// for (SList item : sList) {
+//		//
+//		// String[] stringList = item.getChoice().split("；");
+//		// List<String> trimList = new ArrayList<>();
+//		//
+//		// for (String item1 : stringList) {
+////		    trimList.add(item1.trim());
+//		// }
+//		// choicesMap.put(item.getsId(), trimList);
+//		// }
+//		//
+//		// System.out.println(choicesMap);
+//		//
+//		// for (Map.Entry<Integer, List<String>> entry : choicesMap.entrySet()) {
+//		//
+//		// List<Answer> list = answerDao.findBysId(entry.getKey());
+//		// List<String> stringList = new ArrayList<>();
+//		//
+//		// for (Answer item : list) {
+////		    stringList.add(item.getAnswer());
+//		// }
+//		//
+//		// answersMap.put(entry.getKey(), stringList);
+//		// }
+//		//
+//		// System.out.println(answersMap);
+//
+//		// // 回答的答案, 回答出現次數
+//		// Map<String, Integer> counts = new HashMap<>();
+//		//
+//		// int totalCount = 0;
+//		//
+//		// for (List<String> questionAnswer : answersMap.values()) {
+//		// for (String answerCount : questionAnswer) {
+////		    counts.put(answerCount, counts.getOrDefault(answerCount, 0) + 1);
+//		// }
+//		// }
+//		//
+//		// for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+//		// String answer = entry.getKey();
+//		// int count = entry.getValue();
+//		// double percentsge = 100.0 * count / totalCount;
+//		// System.out.println(answer + "：" + percentsge + "％");
+//		// }
+//		return new QuestionnaireRes(printTotal);
+//	}
+
+//	public QuestionnaireRes statisticalData(int serialNumber) {
+//		List<Questions> questionsList = questionsDao.findBySerialNumber(serialNumber);
+//		
+//
+//		return null;
+//
+//	}
+
+	// 取得所有問卷
 	@Override
-	public QuestionnaireRes statisticalData(int serialNumber) {
-
-		List<Questions> qSerailList = questionsDao.findBySerialNumber(serialNumber);
-		List<Integer> qQuestionsIdList = new ArrayList<>();
-		for (Questions item : qSerailList) {
-			qQuestionsIdList.add(item.getQuestionsId());
-		}
-//
-//		Map<String, Integer> questMap = new HashMap<>();
-//		for (Integer itemQId : qQuestionsIdList) {
-//			List<Questions> qQIdList = questionsDao.findBySerialNumberAndQuestionsId(serialNumber,itemQId);
-//			for (Questions chooseItem : qQIdList) {
-//				questMap.put(chooseItem.getChoose(), 0);
-//			}
-//			
-//		}
-
-//		Map<String, Integer> ansMap = new HashMap<>();
-
-//		 // 幾筆資料 ()               
-//		List<UserAnswer> entryList = userAnswerDao.findBySerialNumber(serialNumber);
-//		for(Entry<Integer, Integer> item1: quesMap.entrySet()) {
-//			for(UserAnswer item2: entryList) {
-//				if(item1.getValue().equals(item2.getQuestionsId())) {
-//					 Questions questions = questionsDao.findBySerialNumberAndQuestionsId(serialNumber, item2.getQuestionsId());
-//					 String[] questionsArray = questions.getChoose().split(";");
-//						for (String arrayItem : questionsArray) {
-//							ansMap.put(arrayItem, 0);
-//						}
-//				}
+	public QuestionnaireRes getAllCaptions() {
+		List<Questionnaire> questionnaireList = questionnaireDao.findAll();
+//		LocalDateTime createTime = LocalDateTime.now();
+//		for (Questionnaire item : questionnaireList) {
+//			String state = "進行中";
+//			// 如果開始時間在現在之後 ， state = 尚未開放投票
+//			if (item.getStartDate().isAfter(LocalDate.now())) {
+//				state = "尚未開始";
+//				// 如果開始時間在現在之後 ， state = 結束投票
+//			} else if (item.getEndDate().isBefore(LocalDate.now())) {
+//				state = "已結束";
+//				// 除此之外都是顯示投票中
+//			} else {
+//				state = "投票中";
 //			}
 //		}
-
-//        
-//		
-//		
-//        for(Questions item : serailList) {
-//        	questionsIdList.add(item.getQuestionsId());	
-//        	
-//        	
-//        }
-//        Questions questions = new Questions();
-//        Questions quest = questionsDao.findBySerialNumberAndQuestionsId(serialNumber, questions.getQuestionsId());
-//		String[] questionsArray = questions.getChoose().split(";");
-//		for (String arrayItem : questionsArray) {
-//			ansMap.put(arrayItem, 0);
-//		}
-
-//		// 此問卷此問題總比數
-//		int listSize = questList.size();
-//
-//			
-//		for (Entry<String, Integer> item1 : ansMap.entrySet()) {
-//			for (UserAnswer item2 : questList) {
-//				if (item1.getKey().equals(item2.getChoose())) {
-//					int count = item1.getValue();
-//					count += 1;
-//					item1.setValue(count);
-//				}
-//			}
-//		}
-//		    for() {
-//		    	
-//		    }
-
-		return null;
+//		questionnaireDao.saveAll();
+		return new QuestionnaireRes(questionnaireList);
 	}
 
+	// 問卷回饋 user
+	@Override
+	public QuestionnaireResList getUserInfoAndAns(int userId) {
+		Optional<UserInfo> userInfoOp = userInfoDao.findById(userId);
+		List<UserAnswer> ansList = userAnswerDao.findByUserId(userId);
+		return new QuestionnaireResList(QuestionnaireRtnCode.SEARCH_SUCCESSFUL.getMessage(), userInfoOp, ansList);
+	}
+
+	// 拿全部使用者回答 userInfoDao !需要修改!
+	@Override
+	public QuestionnaireRes getAllUserInfo(int serialNumber) {
+		List<UserInfo> userList = userInfoDao.findBySerialNumber(serialNumber);
+		return new QuestionnaireRes(userList, QuestionnaireRtnCode.SEARCH_SUCCESSFUL.getMessage());
+	}
+
+	// 顯示問卷問題
+	@Override
+	public QuestionnaireResList getAllQuestions(int serialNumber) {
+		Questionnaire questionnaier = questionnaireDao.findById(serialNumber).get();
+		List<Questions> questionsList = questionsDao.findBySerialNumber(serialNumber);
+		return new QuestionnaireResList(questionnaier, questionsList);
+	}
 }

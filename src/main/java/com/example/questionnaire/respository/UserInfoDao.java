@@ -11,4 +11,6 @@ import com.example.questionnaire.entity.UserInfo;
 public interface UserInfoDao extends JpaRepository<UserInfo, Integer>{
 
 	public List<UserInfo> findAllByUserIdIn(List<Integer> userIdList);
+	
+	public List<UserInfo> findBySerialNumber(int serialNumber);
 }

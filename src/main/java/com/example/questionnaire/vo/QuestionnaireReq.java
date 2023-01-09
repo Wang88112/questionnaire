@@ -31,6 +31,8 @@ public class QuestionnaireReq {
 
 	private String choose;
 
+	private boolean chooseType;
+
 	// user
 	private String userName;
 
@@ -40,9 +42,9 @@ public class QuestionnaireReq {
 
 	private String age;
 
-	//userAnswer
+	// userAnswer
 	private int userId;
-	
+
 	private List<UserAnswer> ansList;
 
 	public QuestionnaireReq() {
@@ -111,6 +113,14 @@ public class QuestionnaireReq {
 
 	public void setChoose(String choose) {
 		this.choose = choose;
+	}
+
+	public boolean isChooseType() {
+		return chooseType;
+	}
+
+	public void setChooseType(boolean chooseType) {
+		this.chooseType = chooseType;
 	}
 
 	public int getUserId() {

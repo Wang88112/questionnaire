@@ -1,6 +1,8 @@
 package com.example.questionnaire.vo;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import com.example.questionnaire.entity.Questionnaire;
 import com.example.questionnaire.entity.Questions;
@@ -14,23 +16,32 @@ public class QuestionnaireRes {
 	private Questionnaire questionnaire;
 
 	private Questions questions;
-	
+
 	private UserInfo user;
-	
+
 	private String message;
-	
+
 	private UserAnswer userAnswer;
-	
+
 	private QuestionnaireResList questionnaireList;
-	
+
 	private List<Questionnaire> questList;
-	
+
 	private List<UserAnswer> ansList;
-	
+
 	private List<QuestionnaireRes> resList;
 
-	public QuestionnaireRes() {
+	private List<UserInfo> userList;
 
+	private List<Questions> questionsList;
+
+	private Optional<UserInfo> userInfoOp;
+
+	private Map<Integer, Map<String, Integer>> printTotal;
+	
+	
+
+	public QuestionnaireRes() {
 	}
 
 	public QuestionnaireRes(String message) {
@@ -41,7 +52,7 @@ public class QuestionnaireRes {
 		this.message = message;
 		this.questionnaire = questionnaire;
 	}
-	
+
 	public QuestionnaireRes(String message, Questions questions) {
 		this.message = message;
 		this.questions = questions;
@@ -51,7 +62,7 @@ public class QuestionnaireRes {
 		this.message = message;
 		this.user = user;
 	}
-	
+
 	public QuestionnaireRes(UserAnswer userAnswer, String message) {
 		this.userAnswer = userAnswer;
 		this.message = message;
@@ -66,7 +77,7 @@ public class QuestionnaireRes {
 		this.user = user;
 		this.userAnswer = userAnswer;
 	}
-	
+
 	public QuestionnaireRes(String message, List<UserAnswer> ansList) {
 		this.message = message;
 		this.ansList = ansList;
@@ -76,6 +87,16 @@ public class QuestionnaireRes {
 		this.message = message;
 		this.user = user;
 		this.ansList = ansList;
+	}
+
+
+	public QuestionnaireRes(List<UserInfo> userList, String message) {
+		this.userList = userList;
+		this.message = message;
+	}
+
+	public void questionsList(List<Questions> questionsList) {
+		this.questionsList = questionsList;
 	}
 
 	public List<UserAnswer> getAnsList() {
@@ -150,6 +171,38 @@ public class QuestionnaireRes {
 		this.resList = resList;
 	}
 
+	public List<UserInfo> getUserList() {
+		return userList;
+	}
 
+	public void setUserList(List<UserInfo> userList) {
+		this.userList = userList;
+	}
+
+	public List<Questions> getQuestionsList() {
+		return questionsList;
+	}
+
+	public void setQuestionsList(List<Questions> questionsList) {
+		this.questionsList = questionsList;
+	}
+
+	public Optional<UserInfo> getUserInfoOp() {
+		return userInfoOp;
+	}
+
+	public void setUserInfoOp(Optional<UserInfo> userInfoOp) {
+		this.userInfoOp = userInfoOp;
+	}
+
+	public Map<Integer, Map<String, Integer>> getPrintTotal() {
+		return printTotal;
+	}
+
+	public void setPrintTotal(Map<Integer, Map<String, Integer>> printTotal) {
+		this.printTotal = printTotal;
+	}
+
+	
 
 }
