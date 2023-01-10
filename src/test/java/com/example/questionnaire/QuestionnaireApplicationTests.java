@@ -1,30 +1,24 @@
 package com.example.questionnaire;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.example.questionnaire.constants.QuestionnaireRtnCode;
 import com.example.questionnaire.entity.Questionnaire;
 import com.example.questionnaire.entity.Questions;
 import com.example.questionnaire.entity.UserAnswer;
 import com.example.questionnaire.respository.QuestionnaireDao;
 import com.example.questionnaire.respository.QuestionsDao;
 import com.example.questionnaire.respository.UserAnswerDao;
-import com.example.questionnaire.vo.QuestionnaireRes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -238,8 +232,8 @@ class QuestionnaireApplicationTests {
 	public void testTest() {
 		Map<Integer, Map<String, Integer>> countsMap = new LinkedHashMap<>();
 
-		List<Questions> questionsList = questionsDao.findBySerialNumber(2);
-		List<UserAnswer> ansList = userAnswerDao.findBySerialNumber(2);
+		List<Questions> questionsList = questionsDao.findBySerialNumber(1);
+		List<UserAnswer> ansList = userAnswerDao.findBySerialNumber(1);
 
 		for (Questions questions : questionsList) {
 
@@ -282,59 +276,73 @@ class QuestionnaireApplicationTests {
 			}
 		}
 	}
-	
-	@Test // 統計數據
-	public void statisticalData01() {
 
+	@Test  //統計數據
+	public void testTest01() {
 		Map<Integer, Map<String, Integer>> countsMap = new LinkedHashMap<>();
 
-		List<Questions> questionsList = questionsDao.findBySerialNumber(1);  //在questionsDao裡找到此問卷所有問題
-		List<UserAnswer> ansList = userAnswerDao.findBySerialNumber(1);  //在userAnswerDao裡找到回答此問卷的答案
+		List<Questions> questionsList = questionsDao.findBySerialNumber(2);
+		List<UserAnswer> ansList = userAnswerDao.findBySerialNumber(2);
 
-		for (Questions questions : questionsList) {  //先對問題的選項進行切割
+		for (Questions questions : questionsList) {
 
 			Map<String, Integer> questionChooseMap = new LinkedHashMap<>();
 
 			String[] stringChoiceList = questions.getChoose().split(";"); // 切割選項
 
 			for (String item1 : stringChoiceList) { // 去空白
-				questionChooseMap.put(item1.trim(), 0); //將切割好的選項放入questionChooseMap的Key值
+				questionChooseMap.put(item1.trim(), 0);
 			}
 
-			countsMap.put(questions.getQuestionsId(), questionChooseMap); //將題號放入countsMap的Key值
+			countsMap.put(questions.getQuestionsId(), questionChooseMap);
 		}
-
-		// aList放切割完的答案
-		List<UserAnswer> aList = new ArrayList<>();
+		
+		List<String> list = new ArrayList<>();
 		
 		for(UserAnswer item : ansList) {
-			String[] stringAnsList = item.getChoose().split(";");
-			
-			for(String item2 : stringAnsList) {
-				aList.add(item2.trim());
+			if(item.getChoose().contains(";")) {
+				String[] a = item.getChoose().split(";");
+				for(String item2 : a) {
+					list.add(item2.trim());
 				}
-		}
-		
-		
-		
-		
-		for (UserAnswer ans : ansList) {
-			
-			for (int i = 1; i <= questionsList.size(); i++) {
-				
-				if (ans.getQuestionsId() == i) {
-
-					for (Map.Entry<String, Integer> entry : countsMap.get(i).entrySet()) {
-						if (entry.getKey().equalsIgnoreCase(ans.getChoose())) {
-							entry.setValue(entry.getValue() + 1);
-						}
-					}
-				}
+			}else {
+			list.add(item.getChoose());
 			}
 		}
+		
 
-		QuestionnaireRes res = new QuestionnaireRes();
-		res.setPrintTotal(countsMap);
+//		List<UserAnswer> answerList = new ArrayList<>();
+//		for(UserAnswer item : answerList) {
+//			String[] aList = item.getChoose().split(";"); // 切割選項
+//			
+//		}
+		
+		
+		
+			
+			for (int i = 1; i <= questionsList.size(); i++) {
+//				for (UserAnswer ans : ansList) {
+//				if (ans.getQuestionsId() == i) {
 
+					for (Map.Entry<String, Integer> entry : countsMap.get(i).entrySet()) {	
+						for(String item : list) {
+						if(entry.getKey().equalsIgnoreCase(item)){
+							entry.setValue(entry.getValue() + 1);
+						}
+						}
+					}
+//				}
+//			}
+		}
+
+
+		for (Map.Entry<Integer, Map<String, Integer>> entry : countsMap.entrySet()) {
+			System.out.println(entry.getKey());
+			for (Map.Entry<String, Integer> entry00 : entry.getValue().entrySet()) {
+				System.out.println(entry00.getKey() + "  " + entry00.getValue());
+
+			}
+		}
 	}
+
 }

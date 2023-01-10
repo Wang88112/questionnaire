@@ -166,7 +166,6 @@ public class QuestionnaireController {
 	}
 
 	
-
 	// 儲存回答者問題(全部)
 	@PostMapping(value = "/api/createUserInfoAndAns")
 	public QuestionnaireResList createUserInfoAndAns(@RequestBody QuestionnaireReq req) {
@@ -200,9 +199,9 @@ public class QuestionnaireController {
 		return questionnaireService.getUserInfoAndAns(req.getUserId());
 	}
 	
-//	//數據統計
-//		@PostMapping(value = "/api/statisticalData")
-//		public QuestionnaireResList statisticalData(@RequestBody QuestionnaireReq req) {
-//			return questionnaireService.getUserInfoAndAns(req.getSerialNumber());
-//		}
+	//數據統計
+		@PostMapping(value = "/api/statisticalData")
+		public QuestionnaireRes statisticalData(@RequestBody QuestionnaireReq req) {
+			return questionnaireService.statisticalData(req.getSerialNumber());
+		}
 }

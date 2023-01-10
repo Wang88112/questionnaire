@@ -107,7 +107,8 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 //		if (questionsIdOp.isPresent()) {
 //			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_QUESTIONS_EXISTED.getMessage());
 //		}
-		Questions questionsInfo = new Questions(serialNumber, questionsId, questions, questionsType, choose, chooseType);
+		Questions questionsInfo = new Questions(serialNumber, questionsId, questions, questionsType, choose,
+				chooseType);
 		questionsDao.save(questionsInfo);
 		questionnaireRes.setMessage(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage());
 		questionnaireRes.setQuestions(questionsInfo);
@@ -116,7 +117,8 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
 	// 2-2更改問題
 	@Override
-	public QuestionnaireRes updateQuestions(int questionsAiId, String questions, boolean questionsType, String choose, boolean chooseType) {
+	public QuestionnaireRes updateQuestions(int questionsAiId, String questions, boolean questionsType, String choose,
+			boolean chooseType) {
 		QuestionnaireRes questionnaireRes = new QuestionnaireRes();
 		Optional<Questions> questionsOp = questionsDao.findById(questionsAiId);
 		if (!questionsOp.isPresent()) {
@@ -225,149 +227,61 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 		return new QuestionnaireResList(QuestionnaireRtnCode.CREATE_SUCCESSFUL.getMessage(), userInfo, ansList);
 	}
 
-//	// 統計問題數據
-//	@Override
-//	public QuestionnaireRes statisticalData(int serialNumber) {
-//		List<Questions> questionsList = questionsDao.findBySerialNumber(serialNumber);
-//		// List<Answer> answerList = answerDao.findByqId(qId);
-//
-//		// 題目編號 , 選項List
-//		// Map<Integer, List<String>> choicesMap = new HashMap<>();
-//
-//		// 題目編號 , 回答List
-//		// Map<Integer, List<String>> answersMap = new HashMap<>();
-//
-//		// 題目編號 , Map<選項, 回答出現的次數>
-//		Map<Integer, Map<String, Integer>> countsMap = new HashMap<>();
-//
-//		Map<Map<Integer, String>, Map<String, Double>> printTotal = new LinkedHashMap<>();
-//		int x = 0;
-//		// 遍歷題目List
-//		for (Questions item : questionsList) {
-//			x++;
-//			// 回答的答案, 回答出現次數
-//			Map<String, Integer> answerMap = new HashMap<>();
-//
-//			Map<Integer, String> questionMap = new LinkedHashMap<>();
-//
-//			Map<String, Double> doubleMap = new LinkedHashMap<>();
-//
-//			questionMap.put(x, item.getQuestions());
-//
-//			// String[] stringList = item.getChoice().split("；"); // 切割選項
-//			// List<String> trimList = new ArrayList<>(); // 切割&去空白後的選項List
-//			//
-//			// for (String item1 : stringList) { // 去空白
-////		    trimList.add(item1.trim());
-//			// }
-//
-//			String[] stringChoiceList = item.getChoose().split("；"); // 切割選項
-//			List<String> trimChoiceList = new ArrayList<>(); // 切割&去空白後的選項List
-//
-//			for (String item1 : stringChoiceList) { // 去空白
-//				trimChoiceList.add(item1.trim());
-//			}
-//
-//			// 找出單一題的List
-//			List<UserAnswer> userAnswerlist = userAnswerDao.findBySerialNumberAndQuestionsId(item.getSerialNumber(),
-//					item.getQuestionsId());
-//			List<String> answersList = new ArrayList<>(); // 所有回答的List
-//			for (UserAnswer ans : userAnswerlist) {
-//				answersList.add(ans.getChoose());
-//			}
-//			
-//			// 所有回答的List，去空白
-//			List<String> answerTrimList = new ArrayList<>();
-//			for (String ans : answersList) {
-//				String[] answerStringList = ans.split("；");
-//				for (String trimAnswer : answerStringList) {
-//					answerTrimList.add(trimAnswer.trim());
-//
-//				}
-//			}
-//			for (String choose : trimChoiceList) {
-//				answerTrimList.add(choose);
-//			}
-//
-//			// 比較選項跟所有回答是否匹配，匹配則加1
-//
-//			for (String ans : answerTrimList) {
-//				answerMap.put(ans, answerMap.getOrDefault(ans, 0) + 1); // 放進Map<String, Integer> answerMap
-//			}
-//
-//			for (Map.Entry<String, Integer> entry : answerMap.entrySet()) {
-//				entry.setValue(entry.getValue() - 1);
-//			}
-//
-//			for (Map.Entry<String, Integer> entry : answerMap.entrySet()) {
-//				String answer = entry.getKey();
-//				int count = entry.getValue();
-//				double percentsge = 100.0 * count / trimChoiceList.size();
-//				doubleMap.put(answer, percentsge);
-////		    System.out.println(answer + "：" + percentsge + "％" + "（" + entry.getValue() + "）");
-//			}
-//
-//			countsMap.put(item.getQuestionsId(), answerMap);
-//			printTotal.put(questionMap, doubleMap);
-//
-//		}
-//
-//		// System.out.println(countsMap);
-//		//
-//		// for (SList item : sList) {
-//		//
-//		// String[] stringList = item.getChoice().split("；");
-//		// List<String> trimList = new ArrayList<>();
-//		//
-//		// for (String item1 : stringList) {
-////		    trimList.add(item1.trim());
-//		// }
-//		// choicesMap.put(item.getsId(), trimList);
-//		// }
-//		//
-//		// System.out.println(choicesMap);
-//		//
-//		// for (Map.Entry<Integer, List<String>> entry : choicesMap.entrySet()) {
-//		//
-//		// List<Answer> list = answerDao.findBysId(entry.getKey());
-//		// List<String> stringList = new ArrayList<>();
-//		//
-//		// for (Answer item : list) {
-////		    stringList.add(item.getAnswer());
-//		// }
-//		//
-//		// answersMap.put(entry.getKey(), stringList);
-//		// }
-//		//
-//		// System.out.println(answersMap);
-//
-//		// // 回答的答案, 回答出現次數
-//		// Map<String, Integer> counts = new HashMap<>();
-//		//
-//		// int totalCount = 0;
-//		//
-//		// for (List<String> questionAnswer : answersMap.values()) {
-//		// for (String answerCount : questionAnswer) {
-////		    counts.put(answerCount, counts.getOrDefault(answerCount, 0) + 1);
-//		// }
-//		// }
-//		//
-//		// for (Map.Entry<String, Integer> entry : counts.entrySet()) {
-//		// String answer = entry.getKey();
-//		// int count = entry.getValue();
-//		// double percentsge = 100.0 * count / totalCount;
-//		// System.out.println(answer + "：" + percentsge + "％");
-//		// }
-//		return new QuestionnaireRes(printTotal);
-//	}
+	// 統計問題數據
+	@Override
+	public QuestionnaireRes statisticalData(int serialNumber) {
+		Map<Integer, Map<String, Integer>> countsMap = new LinkedHashMap<>();
 
-//	public QuestionnaireRes statisticalData(int serialNumber) {
-//		List<Questions> questionsList = questionsDao.findBySerialNumber(serialNumber);
-//		
-//
-//		return null;
-//
-//	}
+		List<Questions> questionsList = questionsDao.findBySerialNumber(serialNumber);//在questionsDao裡找到此問卷所有問題
+		List<UserAnswer> ansList = userAnswerDao.findBySerialNumber(serialNumber); //在userAnswerDao裡找到回答此問卷的答案
+
+		for (Questions questions : questionsList) {  //先對問題的選項進行切割
+
+			Map<String, Integer> questionChooseMap = new LinkedHashMap<>();
+
+			String[] stringChoiceList = questions.getChoose().split(";"); // 切割選項
+
+			for (String item1 : stringChoiceList) { // 去空白
+				questionChooseMap.put(item1.trim(), 0);  //將切割好的選項放入questionChooseMap的Key值
+			}
+
+			countsMap.put(questions.getQuestionsId(), questionChooseMap);  //將題號放入countsMap的Key值
+		}
+		
+
+		List<String> list = new ArrayList<>(); //創新的List來放接切完的答案
+
+		for (UserAnswer item : ansList) {  //遍歷ansList
+			if (item.getChoose().contains(";")) { //
+				String[] a = item.getChoose().split(";");
+				for (String item2 : a) {
+					list.add(item2.trim());
+				}
+			} else {
+				list.add(item.getChoose());
+			}
+		}
+
+
+		for (int i = 1; i <= questionsList.size(); i++) {
+//					for (UserAnswer ans : ansList) {
+//					if (ans.getQuestionsId() == i) {
+
+			for (Map.Entry<String, Integer> entry : countsMap.get(i).entrySet()) {
+				for (String item : list) {
+					if (entry.getKey().equalsIgnoreCase(item)) {
+						entry.setValue(entry.getValue() + 1);
+					}
+				}
+			}
+//					}
+//				}
+		}
+
+		QuestionnaireRes res = new QuestionnaireRes();
+		res.setPrintTotal(countsMap);
+		return res;
+	}
 
 	// 取得所有問卷
 	@Override

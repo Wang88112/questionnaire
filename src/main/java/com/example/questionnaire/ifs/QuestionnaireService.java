@@ -14,7 +14,7 @@ public interface QuestionnaireService {
 	//1-1創建問卷
 	public Questionnaire createQuestionnaire(String caption, String content, LocalDate startDate, LocalDate endDate);
 
-	//1-2更新問卷
+	// !未連 1-2更新問卷
 	public QuestionnaireRes updateQuestionnaire(int serialNumber, String caption, String content, LocalDate startDate, LocalDate endDate);
 	
 	//1-3刪除問卷(需修改成布林值控制(先不改))
@@ -26,7 +26,7 @@ public interface QuestionnaireService {
 	//顯示問卷問題 0108
 	public QuestionnaireResList getAllQuestions(int serialNumber);
 	
-	//2-2更新問題
+	// !未連 2-2更新問題 
 	public QuestionnaireRes updateQuestions(int questionsAiId, String questions, boolean questionsType, String choose, boolean chooseType);
 	
 	//2-3刪除問題(需修改成布林值控制(先不改)) 0108 OK
@@ -43,12 +43,12 @@ public interface QuestionnaireService {
 	public QuestionnaireResList createUserInfoAndAns(int serialNumber, String userName, String phone, String email, String age,
 			List<UserAnswer> ansList);
 		
-	//拿全部使用者回答 userInfoDaouserInfoDao 0108 OK
+	// !未連 拿全部使用者回答 userInfoDaouserInfoDao 0108 OK
 	public QuestionnaireRes getAllUserInfo(int serialNumber);
 	
-	//問卷回饋 !需要修改!  user 0108
+	//!未連 問卷回饋 !需要修改!  user 0108
 	public QuestionnaireResList getUserInfoAndAns(int userId);
 	
-//	//6統計選項
-//	public QuestionnaireRes statisticalData(int serialNumber);
+	//6統計選項
+	public QuestionnaireRes statisticalData(int serialNumber);
 }
