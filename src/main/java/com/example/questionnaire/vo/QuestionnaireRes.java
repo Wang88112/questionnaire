@@ -37,7 +37,7 @@ public class QuestionnaireRes {
 
 	private Optional<UserInfo> userInfoOp;
 
-	private Map<Integer, Map<String, Integer>> printTotal;
+	private Map<String, Map<String, Integer>> printTotal;
 	
 	
 
@@ -195,14 +195,12 @@ public class QuestionnaireRes {
 		this.userInfoOp = userInfoOp;
 	}
 
-	public Map<Integer, Map<String, Integer>> getPrintTotal() {
+	public Map<String, Map<String, Integer>> getPrintTotal() {
 		return printTotal;
 	}
 
-	public void setPrintTotal(Map<Integer, Map<String, Integer>> printTotal) {
+	public void setPrintTotal(Map<String, Map<String, Integer>> printTotal) {
 		this.printTotal = printTotal;
 	}
-
-	
 
 }

@@ -1,6 +1,7 @@
 package com.example.questionnaire.vo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.example.questionnaire.entity.Questionnaire;
@@ -23,6 +24,8 @@ public class QuestionnaireResList {
 	private Optional<Questionnaire> questionnaier;
 
 	private List<Questions> questionsList;
+	
+	private Map<String, Map<String, Integer>> printTotal;
 
 	private String message;
 
@@ -50,6 +53,13 @@ public class QuestionnaireResList {
 	public QuestionnaireResList(Questionnaire questionnaire, List<Questions> questionsList) {
 		this.questionnaire = questionnaire;
 		this.questionsList = questionsList;
+	}
+	
+
+	public QuestionnaireResList(String message, UserInfo userInfo, Map<String, Map<String, Integer>> printTotal) {
+		this.message = message;
+		this.userInfo = userInfo;
+		this.printTotal = printTotal;
 	}
 
 	public QuestionnaireResList(String message) {
@@ -112,4 +122,13 @@ public class QuestionnaireResList {
 		this.questionnaire = questionnaire;
 	}
 
+	public Map<String, Map<String, Integer>> getPrintTotal() {
+		return printTotal;
+	}
+
+	public void setPrintTotal(Map<String, Map<String, Integer>> printTotal) {
+		this.printTotal = printTotal;
+	}
+
+	
 }

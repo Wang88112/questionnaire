@@ -33,6 +33,7 @@ public enum QuestionnaireRtnCode {
 	QUESTIONSAIID_EMPTY("400", "題目編號不得為空!"),
 	QUESTIONSID_INEXISTED("400", "題目編號不存在!"),
 	QUESTIONSID_EMPTY("400", "問題編號不得為空!"),
+	USERANSWER_INEXISTED("400", "尚未有填寫紀錄!"),
 	USERID_INEXISTED("400", "使用者編號不存在!")
 	;
 	

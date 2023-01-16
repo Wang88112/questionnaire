@@ -1,7 +1,6 @@
 package com.example.questionnaire.controller;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.questionnaire.constants.QuestionnaireRtnCode;
 import com.example.questionnaire.entity.Questionnaire;
-import com.example.questionnaire.entity.UserAnswer;
-import com.example.questionnaire.entity.UserInfo;
 import com.example.questionnaire.ifs.QuestionnaireService;
 import com.example.questionnaire.vo.QuestionnaireReq;
 import com.example.questionnaire.vo.QuestionnaireRes;
@@ -96,6 +93,12 @@ public class QuestionnaireController {
 		return questionnaire;
 	}
 
+	// 1-4得到所有問卷
+	@PostMapping(value = "/api/getAllCaptions")
+	public QuestionnaireRes getAllCaptions() {
+		return questionnaireService.getAllCaptions();
+	}
+
 	// 2-1創建問題
 	@PostMapping(value = "/api/createQuestions")
 	public QuestionnaireRes createQuestions(@RequestBody QuestionnaireReq req) {
@@ -146,17 +149,35 @@ public class QuestionnaireController {
 	// 2-3刪除問題
 	@PostMapping(value = "/api/deleteQuestions")
 	public QuestionnaireRes deleteQuestions(@RequestBody QuestionnaireReq req) {
-		if (req.getQuestionsId() <= 0) {
+		if (req.getQuestionsAiId() <= 0) {
 			return new QuestionnaireRes(QuestionnaireRtnCode.CAPTION_EMPTY.getMessage());
 		}
 
-		QuestionnaireRes questions = questionnaireService.deleteQuestions(req.getQuestionsId());
+		QuestionnaireRes questions = questionnaireService.deleteQuestions(req.getQuestionsAiId());
 		return questions;
 	}
 
+	// 2-4顯示問卷問題
+	@PostMapping(value = "/api/getAllQuestions")
+	public QuestionnaireResList getAllQuestions(@RequestBody QuestionnaireReq req) {
+		return questionnaireService.getAllQuestions(req.getSerialNumber());
+	}
 
+	// 3-1儲存回答者問題(全部)
+	@PostMapping(value = "/api/createUserInfoAndAns")
+	public QuestionnaireResList createUserInfoAndAns(@RequestBody QuestionnaireReq req) {
+		return questionnaireService.createUserInfoAndAns(req.getSerialNumber(), req.getUserName(), req.getPhone(),
+				req.getEmail(), req.getAge(), req.getAnsList());
+	}
 
-	// 搜尋問卷(透過問卷名稱模糊搜尋)
+	// 3-2拿全部使用者回答 userInfoDao //要ID姓名創建時間
+	@PostMapping(value = "/api/getAllUserInfo")
+	public QuestionnaireRes getAllUserInfo(@RequestBody QuestionnaireReq req) {
+		return questionnaireService.getAllUserInfo(req.getSerialNumber());
+
+	}
+
+	// 4搜尋問卷(透過問卷名稱模糊搜尋)
 	@PostMapping(value = "/api/findByCaptionContainingAndStartDateAndEndDate")
 	public QuestionnaireRes findByCaptionContainingAndStartDateAndEndDate(@RequestBody QuestionnaireReq req) {
 
@@ -165,43 +186,15 @@ public class QuestionnaireController {
 		return questuonnaire;
 	}
 
-	
-	// 儲存回答者問題(全部)
-	@PostMapping(value = "/api/createUserInfoAndAns")
-	public QuestionnaireResList createUserInfoAndAns(@RequestBody QuestionnaireReq req) {
-		return questionnaireService.createUserInfoAndAns(req.getSerialNumber(), req.getUserName(), req.getPhone(), req.getEmail(),
-				req.getAge(), req.getAnsList());
-	}
-
-	// 得到所有問卷
-	@PostMapping(value = "/api/getAllCaptions")
-	public QuestionnaireRes getAllCaptions() {
-		return questionnaireService.getAllCaptions();
-
-	}
-
-	// !需修改! 拿全部使用者回答 userInfoDao //要ID姓名創建時間 OK
-	@PostMapping(value = "/api/getAllUserInfo")
-	public QuestionnaireRes getAllUserInfo(@RequestBody QuestionnaireReq req) {
-		return questionnaireService.getAllUserInfo(req.getSerialNumber());
-
-	}
-
-	// 顯示問卷問題 OK
-	@PostMapping(value = "/api/getAllQuestions")
-	public QuestionnaireResList getAllQuestions(@RequestBody QuestionnaireReq req) {
-		return questionnaireService.getAllQuestions(req.getSerialNumber());
-	}
-	
-	//問卷回饋 user 0108 ok
+	// 5問卷回饋 user 
 	@PostMapping(value = "/api/getUserInfoAndAns")
 	public QuestionnaireResList getUserInfoAndAns(@RequestBody QuestionnaireReq req) {
 		return questionnaireService.getUserInfoAndAns(req.getUserId());
 	}
-	
-	//數據統計
-		@PostMapping(value = "/api/statisticalData")
-		public QuestionnaireRes statisticalData(@RequestBody QuestionnaireReq req) {
-			return questionnaireService.statisticalData(req.getSerialNumber());
-		}
+
+	// 6數據統計
+	@PostMapping(value = "/api/statisticalData")
+	public QuestionnaireRes statisticalData(@RequestBody QuestionnaireReq req) {
+		return questionnaireService.statisticalData(req.getSerialNumber());
+	}
 }

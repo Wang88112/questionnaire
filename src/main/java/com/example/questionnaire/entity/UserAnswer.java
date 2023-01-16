@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @Table(name = "useranswer")
 public class UserAnswer {
 
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ans_aiid")
@@ -31,6 +30,9 @@ public class UserAnswer {
 
 	@Column(name = "choose")
 	private String choose;
+
+	@Column(name = "questions_aiid")
+	private int questionsAiId;
 
 	public UserAnswer() {
 
@@ -81,6 +83,14 @@ public class UserAnswer {
 
 	public void setChoose(String choose) {
 		this.choose = choose;
+	}
+
+	public int getQuestionsAiId() {
+		return questionsAiId;
+	}
+
+	public void setQuestionsAiId(int questionsAiId) {
+		this.questionsAiId = questionsAiId;
 	}
 
 }

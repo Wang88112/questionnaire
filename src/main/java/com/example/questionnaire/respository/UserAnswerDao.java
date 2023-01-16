@@ -17,7 +17,7 @@ public interface UserAnswerDao extends JpaRepository<UserAnswer, Integer>{
 	
 //	public List<UserAnswer> findAllBySerialNumberAndQuestionsIdIn(int serialNumber, List<Integer> questionsIdList);
 	
-//	public List<UserAnswer> findByQuestions(int serialNumber);
+	public List<UserAnswer> findByQuestionsAiId(int questionsAiId);
 	
 	public List<UserAnswer> findBySerialNumber(int serialNumber);
 	

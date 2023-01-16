@@ -277,16 +277,17 @@ class QuestionnaireApplicationTests {
 		}
 	}
 
+//	@SuppressWarnings("unlikely-arg-type")
 	@Test  //統計數據
 	public void testTest01() {
-		Map<Integer, Map<String, Integer>> countsMap = new LinkedHashMap<>();
+		Map<String, Map<String, Integer>> countsMap = new LinkedHashMap<>();
 
 		List<Questions> questionsList = questionsDao.findBySerialNumber(2);
 		List<UserAnswer> ansList = userAnswerDao.findBySerialNumber(2);
 
 		for (Questions questions : questionsList) {
 
-			Map<String, Integer> questionChooseMap = new LinkedHashMap<>();
+			Map<String, Integer>  questionChooseMap = new LinkedHashMap<>();
 
 			String[] stringChoiceList = questions.getChoose().split(";"); // 切割選項
 
@@ -294,7 +295,7 @@ class QuestionnaireApplicationTests {
 				questionChooseMap.put(item1.trim(), 0);
 			}
 
-			countsMap.put(questions.getQuestionsId(), questionChooseMap);
+			countsMap.put(questions.getQuestions(), questionChooseMap);
 		}
 		
 		List<String> list = new ArrayList<>();
@@ -320,11 +321,11 @@ class QuestionnaireApplicationTests {
 		
 		
 			
-			for (int i = 1; i <= questionsList.size(); i++) {
+			for (int i = 0; i < questionsList.size(); i++) {
 //				for (UserAnswer ans : ansList) {
 //				if (ans.getQuestionsId() == i) {
 
-					for (Map.Entry<String, Integer> entry : countsMap.get(i).entrySet()) {	
+					for (Map.Entry<String, Integer> entry : countsMap.get(questionsList.get(i).getQuestions()) .entrySet()) {	
 						for(String item : list) {
 						if(entry.getKey().equalsIgnoreCase(item)){
 							entry.setValue(entry.getValue() + 1);
@@ -336,7 +337,7 @@ class QuestionnaireApplicationTests {
 		}
 
 
-		for (Map.Entry<Integer, Map<String, Integer>> entry : countsMap.entrySet()) {
+		for (Map.Entry<String, Map<String, Integer>> entry : countsMap.entrySet()) {
 			System.out.println(entry.getKey());
 			for (Map.Entry<String, Integer> entry00 : entry.getValue().entrySet()) {
 				System.out.println(entry00.getKey() + "  " + entry00.getValue());
